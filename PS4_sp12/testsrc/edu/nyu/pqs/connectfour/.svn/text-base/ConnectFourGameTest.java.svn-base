@@ -1,0 +1,298 @@
+package edu.nyu.pqs.connectfour;
+
+import static org.junit.Assert.*;
+
+import org.junit.Test;
+
+public class ConnectFourGameTest {
+	ConnectFourGame connectFourGame1;
+	ConnectFourGame connectFourGame2;
+	ConnectFourGame connectFourGame3;
+	ConnectFourGame connectFourGame4;
+	
+	/**
+	 * Tests builder class which creates object of class ConnectFourGame
+	 * Passing invalid number of row
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testcreateConnectFourGame1() {
+		connectFourGame1 = new ConnectFourGame.Builder().row(3).column(7).getSingleInstance();
+	}
+	
+	/**
+	 * Tests builder class which creates object of class ConnectFourGame
+	 * Passing invalid number of column
+	 */
+	@Test(expected=IllegalArgumentException.class)
+	public void testcreateConnectFourGame2() {
+		connectFourGame1 = new ConnectFourGame.Builder().row(6).column(3).getSingleInstance();
+	}
+	
+	/**
+	 * Tests builder class which creates object of class ConnectFourGame
+	 */
+	@Test
+	public void testcreateConnectFourGame3() {
+		connectFourGame1 = new ConnectFourGame.Builder().getSingleInstance();
+
+		assertEquals(6, connectFourGame1.getRow());
+		assertEquals(7, connectFourGame1.getColumn());
+		assertEquals(Player.playerOne, connectFourGame1.getChance());
+	}
+	
+	/**
+	 * Tests builder class which creates single instance of class 
+	 * ConnectFourGame
+	 */
+	@Test
+	public void testcreateConnectFourGame4() {
+		connectFourGame1 = new ConnectFourGame.Builder().row(6).column(8).getSingleInstance();
+		connectFourGame2 = new ConnectFourGame.Builder().row(6).column(8).getSingleInstance();
+
+		assertSame(connectFourGame1, connectFourGame2);
+	}
+	
+	/**
+	 * Tests if method throws an exception if null object is passed
+	 */
+	@Test(expected=NullPointerException.class)
+	public void testRegisterObserver() {
+		connectFourGame1 = new ConnectFourGame.Builder().row(6).column(8).getSingleInstance();
+		connectFourGame1.registerObserver(null);
+	}
+
+	/**
+	 * Tests if method throws an exception if null object is passed
+	 */
+	@Test(expected=NullPointerException.class)
+	public void testRemoveObserver() {
+		connectFourGame1 = new ConnectFourGame.Builder().row(6).column(8).getSingleInstance();
+		connectFourGame1.removeObserver(null);
+	}
+
+	/**
+	 * Tests startGame method which calls reset method
+	 */
+	@Test
+	public void testStartGame() {
+		int row;
+		int column;
+		int i;
+		int j;
+		GridCellStatus[][] grid;
+		Player chance;
+		Player winner;
+		connectFourGame1 = new ConnectFourGame.Builder().row(6).column(7).getSingleInstance();
+		connectFourGame1.reset();
+		row = connectFourGame1.getRow();
+		column = connectFourGame1.getColumn();
+		grid = connectFourGame1.getGrid();
+		chance = connectFourGame1.getChance();
+		winner = connectFourGame1.getWinner();
+		
+		for(i = 0; i < row; i++) {
+			for(j = 0; j < column; j++) {
+				assertEquals(GridCellStatus.empty, grid[i][j]);
+			}
+		}
+		assertEquals(Player.playerOne, chance);
+		assertEquals(null, winner);
+	}
+
+	/**
+	 * Tests reset method
+	 */
+	@Test
+	public void testReset() {
+		int row;
+		int column;
+		int i;
+		int j;
+		GridCellStatus[][] grid;
+		Player chance;
+		Player winner;
+		connectFourGame1 = new ConnectFourGame.Builder().row(6).column(7).getSingleInstance();
+		connectFourGame1.reset();
+		row = connectFourGame1.getRow();
+		column = connectFourGame1.getColumn();
+		grid = connectFourGame1.getGrid();
+		chance = connectFourGame1.getChance();
+		winner = connectFourGame1.getWinner();
+		
+		for(i = 0; i < row; i++) {
+			for(j = 0; j < column; j++) {
+				assertEquals(GridCellStatus.empty, grid[i][j]);
+			}
+		}
+		assertEquals(Player.playerOne, chance);
+		assertEquals(null, winner);
+	}
+
+	/**
+	 * Tests insertion of first coin
+	 */
+	@Test
+	public void testInsertCoin1() {
+		GridCellStatus[][] grid;
+		int row;
+		int column;
+		connectFourGame1 = new ConnectFourGame.Builder().row(6).column(7).getSingleInstance();
+		connectFourGame1.insertCoin(0);
+		grid = connectFourGame1.getGrid();
+		row = connectFourGame1.getRow();
+
+		assertEquals(GridCellStatus.red, grid[row-1][0]);
+
+	}
+
+	/**
+	 * Tests insertion of second coin
+	 */
+	@Test
+	public void testInsertCoin2() {
+		GridCellStatus[][] grid;
+		int row;
+		int column;
+		connectFourGame1 = new ConnectFourGame.Builder().row(6).column(7).getSingleInstance();
+		connectFourGame1.insertCoin(0);
+		connectFourGame1.insertCoin(0);
+		grid = connectFourGame1.getGrid();
+		row = connectFourGame1.getRow();
+
+		assertEquals(GridCellStatus.red, grid[row-1][0]);
+		assertEquals(GridCellStatus.black, grid[row-2][0]);
+
+	}
+
+	/**
+	 * Tests checkAllowInsert method
+	 */
+	@Test
+	public void testCheckAllowInsert() {
+		GridCellStatus[][] grid;
+		int row;
+		int column;
+		connectFourGame1 = new ConnectFourGame.Builder().row(6).column(7).getSingleInstance();
+		connectFourGame1.insertCoin(0);
+		row = connectFourGame1.getRow();
+		
+		assertFalse(connectFourGame1.checkAllowInsert(row-1, 0));
+		assertTrue(connectFourGame1.checkAllowInsert(row-1, 1));
+		assertFalse(connectFourGame1.checkAllowInsert(row-2, 1));
+	}
+
+	/**
+	 * Tests isGridFull method
+	 */
+	@Test
+	public void testIsGridFull1() {
+		connectFourGame1 = new ConnectFourGame.Builder().row(6).column(7).getSingleInstance();
+		connectFourGame1.insertCoin(0);
+		
+		assertFalse(connectFourGame1.isGridFull());
+	}
+
+	/**
+	 * Tests isWinner method
+	 */
+	@Test
+	public void testIsWinner1() {
+		GridCellStatus[][] grid;
+		connectFourGame1 = new ConnectFourGame.Builder().row(6).column(7).getSingleInstance();
+		connectFourGame1.insertCoin(0);
+		grid = connectFourGame1.getGrid();
+
+		assertFalse(connectFourGame1.isWinner(grid));
+	}
+
+	/**
+	 * Tests getGrid method
+	 */
+	@Test
+	public void testGetGrid() {
+		GridCellStatus[][] grid;
+		int row;
+		int column;
+		connectFourGame1 = new ConnectFourGame.Builder().row(6).column(7).getSingleInstance();
+		connectFourGame1.insertCoin(0);
+		grid = connectFourGame1.getGrid();
+		row = connectFourGame1.getRow();
+
+		assertEquals(GridCellStatus.red, grid[row-1][0]);
+	}
+
+	/**
+	 * Tests getChance method
+	 */
+	@Test
+	public void testGetChance() {
+		Player chance;
+		connectFourGame1 = new ConnectFourGame.Builder().row(6).column(7).getSingleInstance();
+		chance = connectFourGame1.getChance();
+		
+		assertEquals(Player.playerOne, chance);
+	}
+
+	/**
+	 * Tests getwinner method
+	 */
+	@Test
+	public void testGetWinner() {
+		Player winner;
+		connectFourGame1 = new ConnectFourGame.Builder().row(6).column(7).getSingleInstance();
+		winner = connectFourGame1.getWinner();
+		
+		assertEquals(null, winner);
+	}
+
+	/**
+	 * Tests getRow method
+	 */
+	@Test
+	public void testGetRow() {
+		int row;
+		connectFourGame1 = new ConnectFourGame.Builder().row(6).column(7).getSingleInstance();
+		row = connectFourGame1.getRow();
+		
+		assertEquals(6, row);
+	}
+
+	/**
+	 * Tests getColumn method
+	 */
+	@Test
+	public void testGetColumn() {
+		int column;
+		connectFourGame1 = new ConnectFourGame.Builder().row(6).column(7).getSingleInstance();
+		column = connectFourGame1.getColumn();
+		
+		assertEquals(7, column);
+	}
+
+	@Test
+	public void testGetErrorMessage() {
+		connectFourGame1 = new ConnectFourGame.Builder().row(6).column(7).getSingleInstance();
+
+	}
+
+	@Test
+	public void testFireGameStartedEvent() {
+		//fail("Not yet implemented");
+	}
+
+	@Test
+	public void testFireCoinInsertedEvent() {
+		//fail("Not yet implemented");
+	}
+
+	@Test
+	public void testFireWinEvent() {
+		//fail("Not yet implemented");
+	}
+
+	@Test
+	public void testFireInvalidAttemptEvent() {
+		//fail("Not yet implemented");
+	}
+
+}

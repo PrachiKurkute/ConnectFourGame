@@ -1,0 +1,81 @@
+<?xml version="1.0" encoding="UTF-8"?>
+  <project name="PS4_sp12">
+  <description>The Connect Four Game.</description> 
+  <property name="build" location="bin" /> 
+  <property name="src" location="src" /> 
+  <property name="testsrc" location="testsrc" /> 
+  <property name="lib" location="lib" /> 
+  <property name="junit-lib" location="lib/junit-4.10.jar" /> 
+  <property name="dist" location="dist" /> 
+  <!-- 
+ - - - - - - - - - - - - - - - - - 
+          target: clean                      
+         - - - - - - - - - - - - - - - - - 
+
+  --> 
+  <target name="clean">
+  <delete dir="${build}" /> 
+  <delete dir="${dist}" /> 
+  </target>
+  <!-- 
+ - - - - - - - - - - - - - - - - - 
+          target: init                      
+         - - - - - - - - - - - - - - - - - 
+
+  --> 
+  <target name="init">
+  <mkdir dir="${build}" /> 
+  </target>
+  <!-- 
+ ================================= 
+          target: compile              
+         ================================= 
+
+  --> 
+  <target name="compile" depends="clean, init" description="Compile source code.">
+  <javac srcdir="${src}" destdir="${build}" /> 
+  </target>
+  <!-- 
+ ================================= 
+          target: runtests              
+         ================================= 
+
+  --> 
+  <target name="runtests" depends="compile" description="Runs Unit-Tests">
+  <javac srcdir="${testsrc}" destdir="${build}" /> 
+  <junit printsummary="yes" haltonerror="true" haltonfailure="true">
+  <classpath>
+  <pathelement location="${build}" /> 
+  <pathelement location="${junit-lib}/" /> 
+  </classpath>
+  <batchtest fork="yes">
+  <fileset dir="${testsrc}">
+  <include name="**/*Test*.java" /> 
+  </fileset>
+  </batchtest>
+  </junit>
+  </target>
+  <!-- 
+ ================================= 
+          target: dist              
+         ================================= 
+
+  --> 
+  <target name="dist" depends="compile" description="Generate distribution file.">
+  <mkdir dir="${dist}" /> 
+  <jar jarfile="${dist}/ConnectFour.jar" basedir="${build}">
+  <manifest>
+  <attribute name="Main-Class" value="edu.nyu.pqs.connectfour.DemoConnectFour" /> 
+  </manifest>
+  </jar>
+  </target>
+  <!-- 
+ ================================= 
+          target: run              
+         ================================= 
+
+  --> 
+  <target name="run" depends="dist" description="Run the Generated distribution file.">
+  <java jar="${dist}/PS4_sp12.jar" fork="true" /> 
+  </target>
+  </project>
